@@ -1,0 +1,8 @@
+.git
+*Dockerfile*
+*docker-compose*
+node_modules
+*_disabled
+dist
+.nvmrc
+.gitignore

@@ -1,0 +1,26 @@
+{
+    "name": "NestJS with Microservices",
+    "port": 3000,
+    "version": "0.0.1",
+    "basepath": "",
+    "db": {
+        "host": "",
+        "port": 5432,
+        "username": "nestjs-with-microservices",
+        "password": "nestjs_with_microservices_pwd",
+        "database": "nestjs_with_microservices"
+    },
+    "access_secret": "randomSecretString",
+    "access_expiresIn": "7h",
+    "isoDateFormat": "YYYY-MM-DDTHH:mm:ss",
+    "timezone": "Asia/Kolkata",
+    "redis": {
+        "ttl": "600",
+        "host": "redis",
+        "port": "6379",
+        "password": "nestJsWithMicroservicesRedis01"
+    },
+    "fcm": {
+        "keyPath": "config/fir-poc-b030d-firebase-adminsdk-5ja6f-3c2c07f823.json"
+    }
+}

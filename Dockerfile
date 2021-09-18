@@ -1,35 +1,32 @@
-# Development
 
-FROM node:16.9.0-alpine3.11 AS development
+FROM node:alpine
 
-WORKDIR /usr/src/app
+# Add timezone package to docker image
+RUN apk update && apk add -U tzdata && \
+    cp /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
 
-COPY package*.json ./
+RUN mkdir /opt/nestjs-with-microservices
 
-RUN npm install -g rimraf
+# Copy package.json first to cache changes
+WORKDIR /opt
+COPY package.json package-lock.json* ./
+RUN npm install && npm cache clean --force
+ENV PATH /opt/node_modules/.bin:$PATH
 
-RUN npm install --only=development
-
+WORKDIR /opt/nestjs-with-microservices
 COPY . .
 
-RUN npm run build
+# default to port 80 for node, and 9229 and 9231 (tests) for debug
+ARG PORT=3000
+ENV PORT $PORT
 
+# set our node environment, either development or production
+# defaults to production, compose overrides this to development on build and run
+ARG NODE_ENV=development
+ENV NODE_ENV $NODE_ENV
 
-# Production
+EXPOSE $PORT 9231
 
-FROM node:16.9.0-alpine3.11 AS production
+# HEALTHCHECK --interval=30s CMD ts-node healthcheck.ts
+CMD [ "/bin/sh", "-c", " crond && node -r tsconfig-paths/register --require ts-node/register src/main.ts" ]
 
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
-
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-
-RUN npm install --only=production
-
-COPY . .
-
-COPY --from=development /usr/src/app/dist ./dist
-
-CMD ["node", "dist/main"]

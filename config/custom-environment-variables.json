@@ -1,0 +1,25 @@
+{
+    "port": "PORT",
+    "version": "VERSION",
+    "basepath": "BASEPATH",
+    "db": {
+        "host": "DATABASE_HOST",
+        "port": "DATABASE_PORT",
+        "username": "DATABASE_USER",
+        "password": "DATABASE_PASSWD",
+        "database": "DATABASE_NAME"
+    },
+    "access_secret": "JWT_SECRET",
+    "access_expiresIn": "ACCESS_TOKEN_EXPIRY",
+    "isoDateFormat": "ISO_DATE_FORMAT",
+    "timezone": "TIMEZONE",
+    "redis": {
+        "ttl": "REDIS_TTL",
+        "host": "REDIS_HOST",
+        "port": "REDIS_PORT",
+        "password": "REDIS_PASSWORD"
+    },
+    "fcm": {
+        "keyPath": "FCM_KEY_PATH"
+    }
+}

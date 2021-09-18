@@ -1,40 +1,50 @@
 version: '3.8'
 
 services:
-    dev:
-        container_name: nestjs_with_microservices_api_dev
-        image: nestjs-with-microservices-api-dev:1.0.0
-        build:
-            context: .
-            target: development
-            dockerfile: ./Dockerfile
-        command: npm run start:debug
-        ports:
-            - 3000:3000
-            - 9229:9229
-        networks:
-            - nesjs-network
-        volumes:
-            - .:/usr/src/app
-            - /usr/src/app/node_modules
-        restart: unless-stopped
-    prod:
-        container_name: nestjs_with_microservices_api_prod
-        image: nestjs-with-microservices-api-prod:1.0.0
-        build:
-            context: .
-            target: production
-            dockerfile: ./Dockerfile
-        command: npm run start:prod
-        ports:
-            - 3000:3000
-            - 9229:9229
-        networks:
-            - nesjs-network
-        volumes:
-            - .:/usr/src/app
-            - /usr/src/app/node_modules
-        restart: unless-stopped
+  nestjs_proxy:
+    container_name: nestjs_with_microservices
+    image: nestjs-with-microservices
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: nodemon
+    ports:
+      - '3000:3000'
+      - '9231:9230'
+    networks:
+      - nestjs-network
+    env_file:
+      - ./${NODE_ENV}.env
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/opt/nestjs-with-microservices:delegated
+      - ./package.json:/opt/package.json
+      - ./package-lock.json:/opt/package-lock.json
+
+  db:
+    image: postgres:latest
+    networks:
+      - nestjs-network
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: nestjs-with-microservices
+      POSTGRES_PASSWORD: nestjs-with-microservices-pwd
+      POSTGRES_USER: nestjs-with-microservices
+    ports:
+      - '5436:5432'
+
+  redis:
+    image: redis:alpine
+    command: redis-server --requirepass nestJsWithMicroservicesRedis01
+    ports:
+      - '6380:6379'
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    networks:
+      - nestjs-network
 
 networks:
-    nesjs-network:
+  nestjs-network:
